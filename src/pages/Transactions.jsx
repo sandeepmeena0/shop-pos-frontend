@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { transactionService } from '../services/index.js';
 import {
-  ArrowUturnLeftIcon, MagnifyingGlassIcon, CalendarIcon, EyeIcon, XMarkIcon
+  ArrowUturnLeftIcon, MagnifyingGlassIcon, CalendarIcon, EyeIcon, XMarkIcon, FunnelIcon
 } from '@heroicons/react/24/outline';
 import ReceiptModal from '../components/POS/ReceiptModal';
 import ReturnModal from '../components/POS/ReturnModal';
@@ -19,12 +20,14 @@ const getStatusBadge = (method, type) => {
 };
 
 export default function Transactions() {
+  const location = useLocation();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTxn, setSelectedTxn] = useState(null);
   const [returningTxn, setReturningTxn] = useState(null);
   const [foundTxn, setFoundTxn] = useState(null); 
-  const [filterDate, setFilterDate] = useState('');
+  const [filterDate, setFilterDate] = useState(location.state?.filterDate || '');
+  const [filterType, setFilterType] = useState(location.state?.filterType || '');
   const [searchReceipt, setSearchReceipt] = useState('');
   const [searching, setSearching] = useState(false);
 
@@ -79,8 +82,10 @@ export default function Transactions() {
   }, []);
 
   const filtered = transactions.filter(txn => {
-    if (!filterDate) return true;
-    return new Date(txn.createdAt).toLocaleDateString() === new Date(filterDate).toLocaleDateString();
+    if (filterDate && new Date(txn.createdAt).toLocaleDateString() !== new Date(filterDate).toLocaleDateString()) return false;
+    if (filterType === 'SALE' && txn.type === 'RETURN') return false;
+    if (filterType === 'RETURN' && txn.type !== 'RETURN') return false;
+    return true;
   });
 
   return (
@@ -116,6 +121,20 @@ export default function Transactions() {
               </button>
             )}
           </form>
+
+          {/* Type Filter */}
+          <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border shadow-sm">
+            <FunnelIcon className="w-4 h-4 text-gray-400" />
+            <select 
+              value={filterType} 
+              onChange={e => setFilterType(e.target.value)} 
+              className="border-none focus:ring-0 text-sm font-medium text-gray-700 outline-none bg-transparent appearance-none cursor-pointer pr-4"
+            >
+              <option value="">All Types</option>
+              <option value="SALE">Sales Only</option>
+              <option value="RETURN">Refunds Only</option>
+            </select>
+          </div>
 
           {/* Date Filter */}
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border shadow-sm">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { dashboardService } from '../services/index.js';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   CurrencyRupeeIcon, ShoppingCartIcon, ArrowTrendingUpIcon,
   UserGroupIcon, ExclamationTriangleIcon, CubeIcon, ArrowUturnLeftIcon
@@ -15,9 +15,12 @@ const getPaymentBadge = (method) => {
   return map[method] || 'bg-gray-100 text-gray-700';
 };
 
-function StatCard({ label, value, icon: Icon, color, sub }) {
+function StatCard({ label, value, icon: Icon, color, sub, onClick }) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+    <div 
+      onClick={onClick}
+      className={`bg-white rounded-2xl p-6 shadow-sm border border-gray-100 transition-all relative overflow-hidden group ${onClick ? 'cursor-pointer hover:shadow-md hover:border-primary/40 active:scale-[0.98]' : 'hover:shadow-md'}`}
+    >
       <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full opacity-40 group-hover:scale-150 transition-transform duration-500 ${color.bg}`} />
       <div className="flex justify-between items-start relative z-10">
         <div>
@@ -36,6 +39,9 @@ function StatCard({ label, value, icon: Icon, color, sub }) {
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  // We construct YYYY-MM-DD for current local time properly for the input[type=date] component
+  const todayDateString = new Date().toLocaleDateString('en-CA'); 
 
   useEffect(() => {
     const load = async () => {
@@ -83,6 +89,7 @@ export default function Dashboard() {
           icon={CurrencyRupeeIcon} 
           color={{ bg: 'bg-primary/10', icon: 'bg-primary/10 text-primary' }}
           sub={`Gross Sales`} 
+          onClick={() => navigate('/admin/transactions', { state: { filterDate: todayDateString, filterType: 'SALE' } })}
         />
         <StatCard 
           label="Today's Refunds" 
@@ -90,6 +97,7 @@ export default function Dashboard() {
           icon={ArrowUturnLeftIcon} 
           color={{ bg: 'bg-red-100', icon: 'bg-red-100 text-red-600' }}
           sub={`Customer Returns`} 
+          onClick={() => navigate('/admin/transactions', { state: { filterDate: todayDateString, filterType: 'RETURN' } })}
         />
         <StatCard 
           label="Net Sales" 
@@ -97,6 +105,7 @@ export default function Dashboard() {
           icon={ArrowTrendingUpIcon} 
           color={{ bg: 'bg-green-100', icon: 'bg-green-100 text-green-600' }}
           sub={`Sales - Refunds`} 
+          onClick={() => navigate('/admin/transactions', { state: { filterDate: todayDateString } })}
         />
         <StatCard 
           label="Orders Today" 
@@ -104,6 +113,7 @@ export default function Dashboard() {
           icon={ShoppingCartIcon} 
           color={{ bg: 'bg-blue-100', icon: 'bg-blue-100 text-blue-600' }}
           sub={`${stats.monthly.orders} this month`} 
+          onClick={() => navigate('/admin/transactions', { state: { filterDate: todayDateString } })}
         />
         <StatCard 
           label="Active Store" 

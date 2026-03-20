@@ -61,7 +61,7 @@ function Login() {
             )}
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-primary/20 mb-1.5">
+              <label htmlFor="username" className="block text-sm font-medium text-indigo-200 mb-1.5">
                 Username
               </label>
               <input
@@ -77,7 +77,7 @@ function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-primary/20 mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-indigo-200 mb-1.5">
                 Password
               </label>
               <div className="relative">

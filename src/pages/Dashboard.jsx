@@ -79,21 +79,21 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <StatCard 
           label="Today's Sales" 
-          value={`₹${(stats.today.sales || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 })}`}
+          value={`₹${(stats.today.sales || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`}
           icon={CurrencyRupeeIcon} 
           color={{ bg: 'bg-primary/10', icon: 'bg-primary/10 text-primary' }}
           sub={`Gross Sales`} 
         />
         <StatCard 
           label="Today's Refunds" 
-          value={`₹${(stats.today.refunds || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 })}`}
+          value={`₹${(stats.today.refunds || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`}
           icon={ArrowUturnLeftIcon} 
           color={{ bg: 'bg-red-100', icon: 'bg-red-100 text-red-600' }}
           sub={`Customer Returns`} 
         />
         <StatCard 
           label="Net Sales" 
-          value={`₹${((stats.today.sales - stats.today.refunds) || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 })}`}
+          value={`₹${((stats.today.sales - stats.today.refunds) || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`}
           icon={ArrowTrendingUpIcon} 
           color={{ bg: 'bg-green-100', icon: 'bg-green-100 text-green-600' }}
           sub={`Sales - Refunds`} 

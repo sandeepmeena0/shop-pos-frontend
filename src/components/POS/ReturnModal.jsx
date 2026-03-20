@@ -26,7 +26,9 @@ function ReturnModal({ transaction, onClose, onComplete }) {
     }));
   };
 
-  const totalRefund = returnItems.reduce((sum, item) => sum + (item.price * item.returnQty), 0);
+  const baseRefund = returnItems.reduce((sum, item) => sum + (item.price * item.returnQty), 0);
+  const taxRefund = (baseRefund * (transaction.taxRate || 0)) / 100;
+  const totalRefund = baseRefund + taxRefund;
   const hasItemsToReturn = returnItems.some(i => i.returnQty > 0);
 
   const handleProcessReturn = async () => {
@@ -119,10 +121,18 @@ function ReturnModal({ transaction, onClose, onComplete }) {
 
         {/* Footer */}
         <div className="p-6 bg-gray-50 border-t flex items-center justify-between">
-          <div className="text-left">
-            <p className="text-xs text-gray-500 font-bold uppercase">Total Refund</p>
-            <p className="text-3xl font-black text-red-600">₹{totalRefund.toFixed(2)}</p>
+        <div className="text-left w-full max-w-[240px]">
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-[10px] text-gray-500 font-bold uppercase">Items Subtotal</span>
+            <span className="text-sm font-bold text-gray-700">₹{baseRefund.toFixed(2)}</span>
           </div>
+          <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-200">
+            <span className="text-[10px] text-gray-500 font-bold uppercase">Tax Refund ({transaction.taxRate || 0}%)</span>
+            <span className="text-sm font-bold text-gray-700">₹{taxRefund.toFixed(2)}</span>
+          </div>
+          <p className="text-xs text-gray-500 font-bold uppercase mt-1">Final Total Refund</p>
+          <p className="text-3xl font-black text-red-600 leading-none mt-1">₹{totalRefund.toFixed(2)}</p>
+        </div>
           <button 
             onClick={handleProcessReturn}
             disabled={!hasItemsToReturn || processing}

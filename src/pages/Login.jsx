@@ -45,9 +45,6 @@ function Login() {
         <h2 className="text-center text-3xl font-bold text-white tracking-tight">
           Shop POS
         </h2>
-        <p className="mt-2 text-center text-sm text-indigo-300">
-          Sign in to your terminal
-        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

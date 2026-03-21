@@ -100,12 +100,12 @@ export default function Dashboard() {
           onClick={() => navigate('/admin/transactions', { state: { filterDate: todayDateString, filterType: 'RETURN' } })}
         />
         <StatCard 
-          label="Net Sales" 
-          value={`₹${((stats.today.sales - stats.today.refunds) || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`}
+          label="Net Sales (Month)" 
+          value={`₹${((stats.monthly.sales - stats.monthly.refunds) || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`}
           icon={ArrowTrendingUpIcon} 
           color={{ bg: 'bg-green-100', icon: 'bg-green-100 text-green-600' }}
-          sub={`Sales - Refunds`} 
-          onClick={() => navigate('/admin/transactions', { state: { filterDate: todayDateString } })}
+          sub={`Monthly Sales - Refunds`} 
+          onClick={() => navigate('/admin/transactions')}
         />
         <StatCard 
           label="Orders Today" 

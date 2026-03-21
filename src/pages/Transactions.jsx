@@ -25,11 +25,13 @@ export default function Transactions() {
   const [loading, setLoading] = useState(true);
   const [selectedTxn, setSelectedTxn] = useState(null);
   const [returningTxn, setReturningTxn] = useState(null);
-  const [foundTxn, setFoundTxn] = useState(null); 
+  const [foundTxn, setFoundTxn] = useState(null);
   const [filterDate, setFilterDate] = useState(location.state?.filterDate || '');
   const [filterType, setFilterType] = useState(location.state?.filterType || '');
   const [searchReceipt, setSearchReceipt] = useState('');
   const [searching, setSearching] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   const { fetchProducts } = usePOS();
 
@@ -60,7 +62,7 @@ export default function Transactions() {
       setSearching(false);
     }
   };
-   
+
   const normalizeForReceipt = (txn) => ({
     id: txn.receiptNumber,
     type: txn.type,
@@ -88,6 +90,14 @@ export default function Transactions() {
     return true;
   });
 
+  // Reset pagination when searching or filtering
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterDate, filterType, searchReceipt]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedTransactions = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -95,24 +105,24 @@ export default function Transactions() {
           <h1 className="text-2xl font-bold text-gray-900">Transaction History</h1>
           <p className="text-gray-500 mt-1">{filtered.length} records {filterDate ? 'for selected date' : 'total'}</p>
         </div>
-        
+
         <div className="flex flex-wrap items-center gap-3">
           {/* Receipt Lookup */}
-          <form 
+          <form
             onSubmit={(e) => { e.preventDefault(); performLookup(); }}
             className="flex items-center bg-white px-3 py-1.5 rounded-lg border shadow-sm focus-within:ring-2 focus-within:ring-primary transition-all"
           >
             <MagnifyingGlassIcon className={`w-4 h-4 ${searching ? 'text-primary animate-pulse' : 'text-gray-400'}`} />
-            <input 
-              type="text" 
-              placeholder="Find Receipt #..." 
+            <input
+              type="text"
+              placeholder="Find Receipt #..."
               value={searchReceipt}
               onChange={e => setSearchReceipt(e.target.value)}
-              className="border-none focus:ring-0 text-sm font-medium text-gray-700 outline-none w-32 md:w-48 ml-2" 
+              className="border-none focus:ring-0 text-sm font-medium text-gray-700 outline-none w-32 md:w-48 ml-2"
             />
             {searchReceipt && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={performLookup}
                 disabled={searching}
                 className="text-xs font-bold text-primary hover:text-indigo-800 ml-1"
@@ -125,9 +135,9 @@ export default function Transactions() {
           {/* Type Filter */}
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border shadow-sm">
             <FunnelIcon className="w-4 h-4 text-gray-400" />
-            <select 
-              value={filterType} 
-              onChange={e => setFilterType(e.target.value)} 
+            <select
+              value={filterType}
+              onChange={e => setFilterType(e.target.value)}
               className="border-none focus:ring-0 text-sm font-medium text-gray-700 outline-none bg-transparent appearance-none cursor-pointer pr-4"
             >
               <option value="">All Types</option>
@@ -151,13 +161,13 @@ export default function Transactions() {
       {/* Found Receipt Highlight */}
       {foundTxn && (
         <div className="mb-8 p-6 bg-primary/5 border-2 border-primary/10 rounded-2xl shadow-sm animate-in slide-in-from-top-4 duration-300 relative">
-          <button 
-            onClick={() => setFoundTxn(null)} 
+          <button
+            onClick={() => setFoundTxn(null)}
             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
-          
+
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
@@ -169,22 +179,22 @@ export default function Transactions() {
                 <p className="text-sm text-gray-500 font-medium">Sold by {foundTxn.cashierId?.name || 'N/A'} on {new Date(foundTxn.createdAt).toLocaleDateString()}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <div className="text-right mr-4">
                 <p className="text-xs font-bold text-gray-400 uppercase">Amount</p>
                 <p className="text-2xl font-black text-primary">₹{foundTxn.finalAmount.toFixed(2)}</p>
               </div>
-              <button 
+              <button
                 onClick={() => setSelectedTxn(normalizeForReceipt(foundTxn))}
                 className="px-5 py-2.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm"
               >
                 View Details
               </button>
               {foundTxn.type !== 'RETURN' && (
-                <button 
-                   onClick={() => setReturningTxn(foundTxn)}
-                   className="px-5 py-2.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-100 flex items-center gap-2"
+                <button
+                  onClick={() => setReturningTxn(foundTxn)}
+                  className="px-5 py-2.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-100 flex items-center gap-2"
                 >
                   <ArrowUturnLeftIcon className="w-4 h-4" />
                   Process Return
@@ -214,7 +224,7 @@ export default function Transactions() {
                 <tr><td colSpan="7" className="px-5 py-10 text-center text-gray-400">Loading transactions...</td></tr>
               ) : filtered.length === 0 ? (
                 <tr><td colSpan="7" className="px-5 py-12 text-center text-gray-400">No transactions found</td></tr>
-              ) : filtered.map(txn => (
+              ) : paginatedTransactions.map(txn => (
                 <tr key={txn._id} className={`hover:bg-gray-50 transition-colors ${txn.type === 'RETURN' ? 'bg-red-50/30' : ''}`}>
                   <td className="px-5 py-3.5 font-mono text-sm text-primary font-medium whitespace-nowrap">
                     {txn.receiptNumber}
@@ -262,19 +272,47 @@ export default function Transactions() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 bg-gray-50">
+            <div className="text-sm text-gray-500">
+              Showing <span className="font-medium text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium text-gray-900">{Math.min(currentPage * itemsPerPage, filtered.length)}</span> of <span className="font-medium text-gray-900">{filtered.length}</span> results
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => p - 1)}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <div className="text-sm font-medium text-gray-600 px-2">
+                Page {currentPage} of {totalPages}
+              </div>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(p => p + 1)}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {selectedTxn && <ReceiptModal transaction={selectedTxn} onClose={() => setSelectedTxn(null)} />}
-      
+
       {returningTxn && (
-        <ReturnModal 
-          transaction={returningTxn} 
-          onClose={() => setReturningTxn(null)} 
+        <ReturnModal
+          transaction={returningTxn}
+          onClose={() => setReturningTxn(null)}
           onComplete={() => {
             setReturningTxn(null);
             load(); // Refresh table
             fetchProducts(); // Sync inventory stock immediately
-          }} 
+          }}
         />
       )}
     </div>

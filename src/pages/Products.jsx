@@ -18,6 +18,8 @@ function Products() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRestockOpen, setIsRestockOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -45,6 +47,14 @@ function Products() {
       (p.barcode && p.barcode.includes(searchTerm)) ||
       (p.category && p.category.toLowerCase().includes(searchTerm.toLowerCase()))
     ), [products, searchTerm]);
+
+  // Reset pagination when searching or toggling active
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, showInactive]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleOpenModal = (product = null) => {
     if (product) {
@@ -218,7 +228,7 @@ function Products() {
                   <p className="font-medium">No products found</p>
                   <p className="text-sm mt-1">{isAdmin ? 'Click "Add Product" to create one.' : 'Ask an admin to add products.'}</p>
                 </td></tr>
-              ) : filteredProducts.map(p => (
+              ) : paginatedProducts.map(p => (
                 <tr key={p._id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-5 py-3.5">
                     <p className="font-medium text-gray-900">{p.name}</p>
@@ -267,6 +277,34 @@ function Products() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 bg-gray-50">
+            <div className="text-sm text-gray-500">
+              Showing <span className="font-medium text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium text-gray-900">{Math.min(currentPage * itemsPerPage, filteredProducts.length)}</span> of <span className="font-medium text-gray-900">{filteredProducts.length}</span> results
+            </div>
+            <div className="flex items-center gap-2">
+              <button 
+                disabled={currentPage === 1} 
+                onClick={() => setCurrentPage(p => p - 1)}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <div className="text-sm font-medium text-gray-600 px-2">
+                Page {currentPage} of {totalPages}
+              </div>
+              <button 
+                disabled={currentPage === totalPages} 
+                onClick={() => setCurrentPage(p => p + 1)}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Add/Edit Product Modal */}

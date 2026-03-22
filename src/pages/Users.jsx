@@ -230,12 +230,27 @@ function Users() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Role*</label>
-                <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-primary outline-none text-sm">
-                  <option value="Worker">Worker (POS only)</option>
-                  {isSuperAdmin && <option value="Admin">Admin (Dashboard + POS)</option>}
-                  {isSuperAdmin && <option value="Super Admin">Super Admin (Full Access)</option>}
-                </select>
+                {/* Super Admin: full control. Admin: can only assign Worker, sees read-only badge for Admin/SuperAdmin users */}
+                {isSuperAdmin ? (
+                  <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-primary outline-none text-sm">
+                    <option value="Worker">Worker (POS only)</option>
+                    <option value="Admin">Admin (Dashboard + POS)</option>
+                    <option value="Super Admin">Super Admin (Full Access)</option>
+                  </select>
+                ) : (formData.role === 'Admin' || formData.role === 'Super Admin') ? (
+                  // Admin editing a higher-role user - show as read-only
+                  <div className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-600 flex items-center gap-2">
+                    <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${ROLE_BADGE[formData.role] || ''}`}>{formData.role}</span>
+                    <span className="text-gray-400 text-xs">(cannot change — contact Super Admin)</span>
+                  </div>
+                ) : (
+                  // Admin editing a Worker — can only keep them as Worker
+                  <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-primary outline-none text-sm">
+                    <option value="Worker">Worker (POS only)</option>
+                  </select>
+                )}
               </div>
               <div className="flex gap-3 pt-3 border-t">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm transition">Cancel</button>

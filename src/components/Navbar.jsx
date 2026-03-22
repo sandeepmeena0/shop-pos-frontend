@@ -62,7 +62,13 @@ function Navbar({ onMenuClick }) {
           </button>
 
           {isNotifOpen && (
-            <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+            <>
+              {/* Mobile: full-screen backdrop + top-anchored panel */}
+              <div className="sm:hidden fixed inset-0 bg-black/20 z-[59]" onClick={() => setIsNotifOpen(false)} />
+              <div className="
+                fixed top-16 left-2 right-2 sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:mt-2
+                w-auto sm:w-80 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[60]
+              ">
               <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
                 <h3 className="font-bold text-gray-800">Notifications</h3>
                 <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -117,6 +123,7 @@ function Navbar({ onMenuClick }) {
                  </Link>
               </div>
             </div>
+            </>
           )}
         </div>
 

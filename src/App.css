@@ -14,6 +14,16 @@
 }
 
 @layer base {
+  html {
+    font-size: 14px; /* Default for mobile: scales down 12.5% */
+  }
+
+  @media (min-width: 640px) {
+    html {
+      font-size: 16px; /* Default for tablets/desktops */
+    }
+  }
+
   body {
     @apply font-sans antialiased text-gray-900 bg-white;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";

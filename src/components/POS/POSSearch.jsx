@@ -7,6 +7,7 @@ function POSSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isMobileFocused, setIsMobileFocused] = useState(false);
   const containerRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -87,9 +88,16 @@ function POSSearch() {
   };
 
   return (
-    <div className="relative w-full z-50" ref={containerRef}>
+    <div
+      className={`z-50 transition-all duration-200 ${
+        isMobileFocused
+          ? 'fixed top-2 left-3 right-3 sm:relative sm:top-auto sm:left-auto sm:right-auto sm:w-full'
+          : 'relative w-full'
+      }`}
+      ref={containerRef}
+    >
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+        <MagnifyingGlassIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
       </div>
       <input
         ref={inputRef}
@@ -97,9 +105,16 @@ function POSSearch() {
         value={searchTerm}
         onChange={handleSearchChange}
         onKeyDown={handleKeyDown}
-        onFocus={() => searchTerm.trim() && setIsDropdownOpen(true)}
-        placeholder="Search product by name, barcode, or category..."
-        className="block w-full pl-10 pr-10 py-3 border border-gray-300 shadow-sm rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium"
+        onFocus={() => {
+          setIsMobileFocused(true);
+          if (searchTerm.trim()) setIsDropdownOpen(true);
+        }}
+        onBlur={() => {
+          // Delay so clicks on results register first
+          setTimeout(() => setIsMobileFocused(false), 200);
+        }}
+        placeholder="Search product..."
+        className="block w-full pl-9 pr-8 py-2 border border-gray-300 shadow-sm rounded-lg text-sm leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium"
       />
       {searchTerm && (
         <button 

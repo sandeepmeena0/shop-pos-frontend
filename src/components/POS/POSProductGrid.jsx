@@ -21,12 +21,12 @@ function POSProductGrid() {
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* Categories Pills */}
-      <div className="px-6 py-4 bg-gray-50/50 border-b flex space-x-2 overflow-x-auto no-scrollbar shrink-0">
+      <div className="px-4 md:px-6 py-2.5 sm:py-3 border-b bg-white flex space-x-2 overflow-x-auto no-scrollbar shrink-0 shadow-sm z-10">
         {categories.map(cat => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+            className={`px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
               selectedCategory === cat 
                 ? 'bg-primary text-white shadow-md' 
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-primary-hover/5 hover:text-primary hover:border-primary/20 shadow-sm'
@@ -38,8 +38,8 @@ function POSProductGrid() {
       </div>
 
       {/* Product Grid */}
-      <div className="flex-1 p-6 overflow-y-auto">
-        <div className="grid grid-cols-1 min-[450px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+      <div className="flex-1 p-3 sm:p-6 overflow-y-auto bg-gray-50/50">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {filteredProducts.map(product => (
             <div
               key={product._id}
@@ -64,11 +64,11 @@ function POSProductGrid() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap justify-between items-end mt-auto pt-3 border-t border-gray-100 gap-y-2">
-                  <div className="text-xs text-gray-500">
+              <div className="flex flex-col mt-auto pt-3 border-t border-gray-100">
+                  <div className="text-[10px] sm:text-xs text-gray-500 mb-1">
                      Stock: <span className="font-medium text-gray-900">{product.stock}</span>
                   </div>
-                  <p className="text-primary font-bold text-lg leading-none">₹{product.price.toFixed(2)}</p>
+                  <p className="text-primary font-bold text-sm sm:text-lg leading-none">₹{product.price.toFixed(2)}</p>
               </div>
             </div>
           ))}

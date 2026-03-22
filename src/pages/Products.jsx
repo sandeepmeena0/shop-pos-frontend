@@ -166,27 +166,27 @@ function Products() {
           <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
           <p className="text-gray-500 mt-1">{products.length} products · {products.filter(p => p.stock <= p.lowStockThreshold).length} low stock</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {isAdmin && (
-            <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded-lg border text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 transition">
+            <label className="flex items-center gap-1.5 sm:gap-2 cursor-pointer bg-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border text-xs sm:text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 transition">
               <input 
                 type="checkbox" 
                 checked={showInactive} 
                 onChange={(e) => setShowInactive(e.target.checked)}
-                className="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary focus:ring-primary border-gray-300 rounded"
               />
-              Show All (Inc. Inactive)
+              Show All <span className="hidden sm:inline">(Inc. Inactive)</span>
             </label>
           )}
-          <button onClick={onRefresh} className="p-2 text-gray-500 hover:text-primary hover:bg-primary-hover/5 rounded-lg transition" title="Refresh">
-            <ArrowPathIcon className={`w-5 h-5 ${productsLoading ? 'animate-spin' : ''}`} />
+          <button onClick={onRefresh} className="p-1.5 sm:p-2 text-gray-500 hover:text-primary hover:bg-primary-hover/5 rounded-lg transition" title="Refresh">
+            <ArrowPathIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${productsLoading ? 'animate-spin' : ''}`} />
           </button>
           {isAdmin && (
             <button
               onClick={() => handleOpenModal()}
-              className="flex items-center px-4 py-2 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg shadow-sm transition-colors"
+              className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm transition-colors"
             >
-              <PlusIcon className="w-5 h-5 mr-1.5" /> Add Product
+              <PlusIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-1.5" /> <span className="hidden min-[400px]:inline">Add Product</span><span className="min-[400px]:hidden">Add</span>
             </button>
           )}
         </div>

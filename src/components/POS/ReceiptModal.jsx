@@ -24,9 +24,36 @@ function ReceiptModal({ transaction, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-start justify-center p-4 overflow-y-auto pt-28">
-      {/* Consolidated Header Action Bar - Hidden When Printing */}
-      <div className="fixed top-6 inset-x-0 flex justify-center items-center pointer-events-none print:hidden z-50">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-start justify-center p-4 overflow-y-auto pt-6 sm:pt-24">
+
+      {/* Mobile: Bottom action bar */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-2xl flex items-center justify-between px-4 py-3 z-50 print:hidden">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0">
+            <CheckCircleIcon className="w-3.5 h-3.5" />
+          </div>
+          <span className="font-bold text-gray-800 text-sm">Payment Successful</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={handlePrint} 
+            className="flex items-center px-3 py-1.5 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95 text-xs"
+          >
+            <PrinterIcon className="w-4 h-4 mr-1.5" />
+            Print
+          </button>
+          <button 
+            onClick={onClose} 
+            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-gray-200" 
+            title="Close"
+          >
+            <XMarkIcon className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop: Top-center action bar */}
+      <div className="hidden sm:flex fixed top-6 inset-x-0 justify-center items-center pointer-events-none print:hidden z-50">
         <div className="flex bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-2xl border border-white/20 gap-4 pointer-events-auto animate-in slide-in-from-top-4 duration-300 items-center">
           <div className="flex items-center gap-2 pr-4 border-r border-gray-200">
             <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white">

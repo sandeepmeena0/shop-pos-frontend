@@ -104,13 +104,19 @@ export const POSProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
+    // Clear all session data
     localStorage.removeItem('pos_token');
     localStorage.removeItem('pos_user');
+    localStorage.removeItem('pos_cart');
+    localStorage.removeItem('pos_hold_orders');
+    // Reset all state
     setCurrentUser(null);
     setProducts([]);
     setCart([]);
-  };
+    setHoldOrders([]);
+    setSettings(null);
+  }, []);
 
   // --- Product Actions ---
   const fetchProducts = useCallback(async (options = {}) => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { usePOS } from '../context/POSContext';
 import { ComputerDesktopIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -10,9 +10,16 @@ function Login() {
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = usePOS();
+  const { login, currentUser } = usePOS();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // If already logged in, redirect away from login page
+  const token = localStorage.getItem('pos_token');
+  if (currentUser && token) {
+    const destination = currentUser.role === 'Worker' ? '/pos' : '/admin/dashboard';
+    return <Navigate to={destination} replace />;
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -6,7 +6,11 @@ export function PrivateRoute({ children, allowedRoles }) {
   const { currentUser } = usePOS();
   const location = useLocation();
 
-  if (!currentUser) {
+  // Double-check: token must exist in localStorage too
+  // This catches cases where logout cleared storage but context state is stale
+  const token = localStorage.getItem('pos_token');
+
+  if (!currentUser || !token) {
     // Not logged in, redirect to login page with the return url
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

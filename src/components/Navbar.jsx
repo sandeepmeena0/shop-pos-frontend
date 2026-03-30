@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { usePOS } from '../context/POSContext';
-import { Bars3Icon, BellIcon, UserCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, BellIcon, UserCircleIcon, ExclamationTriangleIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
 function Navbar({ onMenuClick }) {
@@ -49,6 +49,16 @@ function Navbar({ onMenuClick }) {
           {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
         </div>
         
+        {/* POS Terminal Quick Access */}
+        <Link
+          to="/pos"
+          title="POS Terminal"
+          className="group relative flex items-center gap-1.5 bg-primary text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow hover:bg-primary/90 hover:shadow-md transition-all duration-200"
+        >
+          <ComputerDesktopIcon className="h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline">POS Terminal</span>
+        </Link>
+
         {/* Notifications Dropdown */}
         <div className="relative" ref={notifRef}>
           <button 

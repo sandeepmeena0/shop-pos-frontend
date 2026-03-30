@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { usePOS } from '../../context/POSContext';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 function POSProductGrid() {
   const { products, addToCart } = usePOS();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [addedId, setAddedId] = useState(null);
+  const [pressedId, setPressedId] = useState(null);
 
   // Filter Categories
   const categories = useMemo(() => {
@@ -17,6 +19,12 @@ function POSProductGrid() {
     if (selectedCategory === "All") return products;
     return products.filter(p => p.category === selectedCategory);
   }, [products, selectedCategory]);
+
+  const handleAddToCart = useCallback((product) => {
+    addToCart(product);
+    setAddedId(product._id);
+    setTimeout(() => setAddedId(null), 700);
+  }, [addToCart]);
 
   return (
     <div className="flex-1 flex flex-col h-full">
@@ -40,12 +48,29 @@ function POSProductGrid() {
       {/* Product Grid */}
       <div className="flex-1 p-3 sm:p-6 overflow-y-auto bg-gray-50/50">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-          {filteredProducts.map(product => (
+          {filteredProducts.map(product => {
+            const isAdded = addedId === product._id;
+            const isPressed = pressedId === product._id;
+            return (
             <div
               key={product._id}
-              onClick={() => addToCart(product)}
-              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-200 cursor-pointer flex flex-col relative animate-in fade-in zoom-in"
+              onClick={() => handleAddToCart(product)}
+              onPointerDown={() => setPressedId(product._id)}
+              onPointerUp={() => setPressedId(null)}
+              onPointerLeave={() => setPressedId(null)}
+              style={{ transform: isPressed ? 'scale(0.94)' : isAdded ? 'scale(1.03)' : 'scale(1)', transition: 'transform 0.12s ease, box-shadow 0.15s ease' }}
+              className={`bg-white rounded-xl p-4 border shadow-sm cursor-pointer flex flex-col relative animate-in fade-in zoom-in select-none
+                ${isAdded ? 'border-green-400 shadow-green-200 shadow-md' : 'border-gray-200 hover:shadow-md hover:border-primary/50'}`}
             >
+              {/* Added feedback overlay */}
+              {isAdded && (
+                <div className="absolute inset-0 rounded-xl bg-green-500/10 flex items-center justify-center z-20 pointer-events-none">
+                  <span className="bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-bounce">
+                    ✓ Added!
+                  </span>
+                </div>
+              )}
+
               {/* Stock indicator badge */}
               {product.stock <= 10 && (
                   <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-100 text-red-700 border border-red-200 text-[10px] font-bold px-2 py-0.5 rounded-full z-10 shadow-sm">
@@ -71,7 +96,8 @@ function POSProductGrid() {
                   <p className="text-primary font-bold text-sm sm:text-lg leading-none">₹{product.price.toFixed(2)}</p>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {filteredProducts.length === 0 && (
             <div className="col-span-full h-full flex flex-col justify-center items-center text-gray-400 py-20">
